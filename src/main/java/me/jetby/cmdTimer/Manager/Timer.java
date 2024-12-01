@@ -22,7 +22,6 @@ public class Timer {
     public static Map<Player, Integer> playerCountdowns = new HashMap<>();
 
     public static void startTimer(Player player, String command, int time) {
-        // Создаём уникальный боссбар для игрока
         BossBar bossBar = Bukkit.createBossBar(
                 cfg.getString("BossBar.countdown").replace('&', '§'),
                 BarColor.valueOf(cfg.getString("BossBar.Color")),
@@ -40,21 +39,18 @@ public class Timer {
             public void run() {
                 int currentCountdown = playerCountdowns.get(player);
                 if (currentCountdown > 0) {
-                    // Устанавливаем прогресс и обновляем титул боссбара
                     double progress = currentCountdown / (double) time;
                     bossBar.setProgress(progress);
                     bossBar.setTitle(cfg.getString("BossBar.countdown").replace('&', '§').replace("{timer}", String.valueOf(currentCountdown)));
                     playerCountdowns.put(player, currentCountdown - 1);
 
                 } else {
-                    // Запускаем команду, когда таймер заканчивается
                     bossBar.removeAll();
                     activeTimers.remove(player);
                     playerBossBars.remove(player);
                     playerCountdowns.remove(player);
-                    Bukkit.dispatchCommand(player, command); // выполняем команду после обратного отсчёта
+                    Bukkit.dispatchCommand(player, command);
                     cancel();
-                    // Получаем действия из конфига и выполняем их
                     List<String> actions = cfg.getStringList("actions.end");
                     for (String action : actions) {
                         Actions(player, action.replace("%time%", String.valueOf(time)));
@@ -62,7 +58,7 @@ public class Timer {
                 }
             }
         };
-        task.runTaskTimer(getInstance(), 0, 20); // Таймер на каждую секунду
+        task.runTaskTimer(getInstance(), 0, 20);
         activeTimers.put(player, task);
     }
 
@@ -78,7 +74,6 @@ public class Timer {
 
             playerCountdowns.remove(player);
 
-            // Получаем действия из конфига и выполняем их
             List<String> actions = cfg.getStringList("actions.cancel");
             for (String action : actions) {
                 Actions(player, action);
