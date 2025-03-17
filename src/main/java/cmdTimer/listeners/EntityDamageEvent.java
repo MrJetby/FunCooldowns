@@ -1,4 +1,4 @@
-package me.jetby.cmdTimer.Events;
+package cmdTimer.listeners;
 
 import org.bukkit.World;
 import org.bukkit.entity.EntityType;
@@ -9,29 +9,33 @@ import org.bukkit.event.entity.EntityDamageByEntityEvent;
 
 import java.util.List;
 
-import static me.jetby.cmdTimer.Main.cfg;
-import static me.jetby.cmdTimer.Manager.Timer.cancelTimer;
+import static me.jetby.cmdTimer.manager.Timer.cancelTimer;
+import static me.jetby.cmdTimer.utils.Config.CFG;
 
 public class EntityDamageEvent implements Listener {
     @EventHandler
     public void onPlayerDamage(EntityDamageByEntityEvent event) {
-        // Проверяем, что пострадавший - игрок
         if (event.getEntity() instanceof Player) {
             Player player = (Player) event.getEntity();
 
-            List<String> DisabledWorlds = cfg.getStringList("Damage-Disabled-Worlds");
+            List<String> DisabledWorlds = CFG().getStringList("Damage-Disabled-Worlds");
 
             World world = player.getWorld();
             if (!(DisabledWorlds.contains(world.getName()))) {
-                if (cfg.getBoolean("CancelOnPlayerDamage")) {
+                if (CFG().getBoolean("CancelOnPlayerDamage")) {
                     if (event.getDamager().getType() == EntityType.PLAYER) {
-                        cancelTimer(player);
+                        if (event.getDamage()!=0) {
+                            cancelTimer(player);
+                        }
                     }
                 }
 
-                if (cfg.getBoolean("CancelOnMobDamage")) {
+                if (CFG().getBoolean("CancelOnMobDamage")) {
                     if (event.getDamager().getType().isAlive()) {
-                        cancelTimer(player);
+                        if (event.getDamage()!=0) {
+                            cancelTimer(player);
+                        }
+
                     }
                 }
             }

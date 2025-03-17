@@ -1,28 +1,24 @@
-package me.jetby.cmdTimer.Manager;
+package cmdTimer.manager;
 
-import me.jetby.cmdTimer.Utils.Parser;
 import net.md_5.bungee.api.ChatMessageType;
 import net.md_5.bungee.api.chat.ClickEvent;
-import net.md_5.bungee.api.chat.HoverEvent;
 import net.md_5.bungee.api.chat.TextComponent;
-import net.md_5.bungee.api.chat.hover.content.Text;
 import org.bukkit.Bukkit;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
-import org.bukkit.configuration.file.FileConfiguration;
-import org.bukkit.plugin.java.JavaPlugin;
 
-import static me.jetby.cmdTimer.Main.cfg;
-import static me.jetby.cmdTimer.Utils.Parser.color;
+import static me.jetby.cmdTimer.utils.Config.CFG;
+import static me.jetby.cmdTimer.utils.Parser.color;
 
-public class Listeners {
+public class Actions {
 
 
-    public static void Actions(Player player, String command) {
+    public static void execute(Player player, String command) {
         String[] args = command.split(" ");
         String withoutCMD = command.replace(args[0] + " ", "");
+        String cancelTeleport =  CFG().getString("cancel-command");
 
 
         switch (args[0]) {
@@ -32,7 +28,7 @@ public class Listeners {
             }
             case "[BUTTON]": {
                 TextComponent msg = new TextComponent(color(withoutCMD));
-                msg.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/cancelteleport"));
+                msg.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, cancelTeleport));
                 player.spigot().sendMessage(ChatMessageType.CHAT, msg);
                 break;
             }

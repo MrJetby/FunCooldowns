@@ -1,6 +1,7 @@
-package me.jetby.cmdTimer.Utils;
+package cmdTimer.utils;
 
-import net.md_5.bungee.api.ChatColor;
+
+import org.bukkit.ChatColor;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -16,10 +17,10 @@ public class Parser {
         Matcher matcher = pattern.matcher(text);
         while (matcher.find()) {
             String colorCode = text.substring(matcher.start() + 1, matcher.end());
-            text = text.replace(matcher.group(), String.valueOf(ChatColor.of((String)colorCode)));
+            text = text.replace(matcher.group(), String.valueOf(ChatColor.valueOf(colorCode)));
             matcher = pattern.matcher(text);
         }
-        return ChatColor.translateAlternateColorCodes((char)'&', (String)text);
+        return ChatColor.translateAlternateColorCodes('&', text);
     }
 
 }

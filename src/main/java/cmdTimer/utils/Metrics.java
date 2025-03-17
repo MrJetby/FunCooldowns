@@ -1,4 +1,4 @@
-package me.jetby.cmdTimer.Utils;
+package cmdTimer.utils;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
