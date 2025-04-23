@@ -1,4 +1,4 @@
-package cmdTimer.commands;
+package me.jetby.cmdTimer.commands;
 
 import me.jetby.cmdTimer.utils.Config;
 import org.bukkit.command.Command;
@@ -15,7 +15,7 @@ public class Reload implements CommandExecutor {
 
         if (commandSender.hasPermission("cmdtimer.reload")) {
             Config cfg = new Config();
-            cfg.loadYamlFile(getInstance());
+            cfg.reloadCfg(getInstance());
             commandSender.sendMessage(CFG().getString("messages.reload").replace('&', '§'));
         } else {
             commandSender.sendMessage(CFG().getString("messages.noperm").replace('&', '§'));

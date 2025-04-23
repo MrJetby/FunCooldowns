@@ -1,4 +1,4 @@
-package cmdTimer;
+package me.jetby.cmdTimer;
 
 import me.jetby.cmdTimer.commands.Reload;
 import me.jetby.cmdTimer.listeners.EntityDamageEvent;

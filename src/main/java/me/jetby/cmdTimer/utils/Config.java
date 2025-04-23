@@ -1,4 +1,4 @@
-package cmdTimer.utils;
+package me.jetby.cmdTimer.utils;
 
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.InvalidConfigurationException;

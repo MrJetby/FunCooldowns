@@ -1,4 +1,4 @@
-package cmdTimer.manager;
+package me.jetby.cmdTimer.manager;
 
 import org.bukkit.Bukkit;
 import org.bukkit.boss.BarColor;

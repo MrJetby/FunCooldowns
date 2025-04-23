@@ -25,12 +25,18 @@ commands:
 
 Timer:
   # Можно создать неограниченное кол-во пермишенов.
+  # Напримере donate2 пермишеном будет funcooldowns.donate2
   admin: 0
   donate2: 3 # Кулдан для тех у кого есть пермишен donate2
   default: 7 # Стандартный кулдаун
 
 CancelOnMobDamage: false
 CancelOnPlayerDamage: true
+
+
+# Миры в которых не будет кулдауна
+disabled-worlds:
+  - disabled_world
 
 # Выключение урона в мирах, полезно на спавне чтобы игроки не мешали другим телепортироваться
 Damage-Disabled-Worlds:

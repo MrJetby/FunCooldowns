@@ -1,4 +1,4 @@
-package cmdTimer.manager;
+package me.jetby.cmdTimer.manager;
 
 import net.md_5.bungee.api.ChatMessageType;
 import net.md_5.bungee.api.chat.ClickEvent;
@@ -11,6 +11,7 @@ import org.bukkit.potion.PotionEffectType;
 
 import static me.jetby.cmdTimer.utils.Config.CFG;
 import static me.jetby.cmdTimer.utils.Parser.color;
+import static me.jetby.cmdTimer.utils.Parser.hex;
 
 public class Actions {
 
@@ -27,7 +28,8 @@ public class Actions {
                 break;
             }
             case "[BUTTON]": {
-                TextComponent msg = new TextComponent(color(withoutCMD));
+                String text = hex(withoutCMD);
+                TextComponent msg = new TextComponent(text);
                 msg.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, cancelTeleport));
                 player.spigot().sendMessage(ChatMessageType.CHAT, msg);
                 break;
