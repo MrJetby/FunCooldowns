@@ -1,6 +1,7 @@
 package me.jetby.cmdTimer.listeners;
 
 
+import me.jetby.cmdTimer.Main;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -9,22 +10,24 @@ import org.bukkit.event.player.PlayerCommandPreprocessEvent;
 
 import java.util.List;
 
-import static me.jetby.cmdTimer.manager.Actions.execute;
-import static me.jetby.cmdTimer.manager.Timer.*;
 import static me.jetby.cmdTimer.utils.Config.CFG;
 
 public class PlayerCommandPreprocess implements Listener {
-    private List<String> commands = CFG().getStringList("commands");
+    private final Main plugin;
+    public PlayerCommandPreprocess(Main plugin) {
+        this.plugin = plugin;
+    }
+    private final List<String> commands = CFG().getStringList("commands");
 
-    @EventHandler(priority = EventPriority.HIGH)
+    @EventHandler(priority = EventPriority.HIGHEST)
     public void onPlayerCommandPreprocess(PlayerCommandPreprocessEvent e) {
-        String command = e.getMessage().substring(1).toLowerCase(); // убираем слэш для чистоты строки
+        String command = e.getMessage().substring(1).toLowerCase();
         Player p = e.getPlayer();
 
 
         if (command.equalsIgnoreCase(CFG().getString("cancel-command", "/cancelteleport").substring(1).toLowerCase())) {
-            if (activeTimers.containsKey(p.getUniqueId())) {
-                cancelTimer(p);
+            if (plugin.getTimer().getActiveTimers().containsKey(p.getUniqueId())) {
+                plugin.getTimer().cancelTimer(p);
             } else {
                 p.sendMessage(CFG().getString("messages.nothing").replace('&', '§'));
             }
@@ -33,20 +36,15 @@ public class PlayerCommandPreprocess implements Listener {
         }
 
         if (command.equalsIgnoreCase(CFG().getString("cancel-command"))) {
-            cancelTimer(p);
+            plugin.getTimer().cancelTimer(p);
             return;
         }
 
-        String[] commandParts = command.split(" ");
-        String baseCommand = commandParts[0];
 
-        boolean shouldDelay = commands.stream().anyMatch(configCommand -> {
-            if (configCommand.endsWith("!")) {
-                return baseCommand.equalsIgnoreCase(configCommand.replace("!", ""));
-            }
-            return baseCommand.equalsIgnoreCase(configCommand);
-        });
 
+        boolean shouldDelay = commands.stream().anyMatch((configCommand) ->
+                configCommand.endsWith("!") ? command.startsWith(configCommand
+                        .replace("!", "")) : command.equalsIgnoreCase(configCommand));
 
 
         if (shouldDelay) {
@@ -60,12 +58,8 @@ public class PlayerCommandPreprocess implements Listener {
                     }
                 }
             }
-
-
-
-            // Если у игрока уже есть активный таймер, отменяем его и перезапускаем
-            if (activeTimers.containsKey(e.getPlayer().getUniqueId())) {
-                cancelTimer(e.getPlayer());
+            if (plugin.getTimer().getActiveTimers().containsKey(e.getPlayer().getUniqueId())) {
+                plugin.getTimer().cancelTimer(p);
             }
             int time = CFG().getInt("Timer.default");
             for (String perm : CFG().getConfigurationSection("Timer").getKeys(false)) {
@@ -78,12 +72,11 @@ public class PlayerCommandPreprocess implements Listener {
                 e.setCancelled(true);
                 List<String> actions = CFG().getStringList("actions.start");
                 for (String action : actions) {
-                    execute(p, action.replace("%time%", String.valueOf(time)));
+                    plugin.getActions().execute(p, action.replace("%time%", String.valueOf(time)));
                 }
-                startTimer(e.getPlayer(), command, time);
+                plugin.getTimer().startTimer(e.getPlayer(), command, time);
             }
         }
     }
-
-    }
+}
 

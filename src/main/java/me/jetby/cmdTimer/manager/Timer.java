@@ -1,5 +1,7 @@
 package me.jetby.cmdTimer.manager;
 
+import lombok.Getter;
+import me.jetby.cmdTimer.Main;
 import org.bukkit.Bukkit;
 import org.bukkit.boss.BarColor;
 import org.bukkit.boss.BarStyle;
@@ -12,17 +14,21 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
-import static me.jetby.cmdTimer.Main.*;
-import static me.jetby.cmdTimer.manager.Actions.execute;
 import static me.jetby.cmdTimer.utils.Config.CFG;
 
+@Getter
 public class Timer {
 
-    public static Map<UUID, BukkitRunnable> activeTimers = new HashMap<>();
-    public static Map<UUID, BossBar> playerBossBars = new HashMap<>();
-    public static Map<UUID, Integer> playerCountdowns = new HashMap<>();
+    private final Map<UUID, BukkitRunnable> activeTimers = new HashMap<>();
+    private final Map<UUID, BossBar> playerBossBars = new HashMap<>();
+    private final Map<UUID, Integer> playerCountdowns = new HashMap<>();
 
-    public static void startTimer(Player player, String command, int time) {
+
+    private final Main plugin;
+    public Timer(Main plugin) {
+        this.plugin = plugin;
+    }
+    public void startTimer(Player player, String command, int time) {
         BossBar bossBar = Bukkit.createBossBar(
                 CFG().getString("BossBar.countdown").replace('&', '§'),
                 BarColor.valueOf(CFG().getString("BossBar.Color")),
@@ -31,8 +37,7 @@ public class Timer {
         bossBar.addPlayer(player);
         playerBossBars.put(player.getUniqueId(), bossBar);
 
-//        int countdown = time;
-        playerCountdowns.put(player.getUniqueId(), time); // вместо time было countdown
+        playerCountdowns.put(player.getUniqueId(), time);
 
         BukkitRunnable task = new BukkitRunnable() {
             @Override
@@ -53,16 +58,16 @@ public class Timer {
                     cancel();
                     List<String> actions = CFG().getStringList("actions.end");
                     for (String action : actions) {
-                        execute(player, action.replace("%time%", String.valueOf(time)));
+                        plugin.getActions().execute(player, action.replace("%time%", String.valueOf(time)));
                     }
                 }
             }
         };
-        task.runTaskTimer(getInstance(), 0, 20);
+        task.runTaskTimer(plugin, 0, 20);
         activeTimers.put(player.getUniqueId(), task);
     }
 
-    public static void cancelTimer(Player player) {
+    public void cancelTimer(Player player) {
         if (activeTimers.containsKey(player.getUniqueId())) {
             activeTimers.get(player.getUniqueId()).cancel();
             activeTimers.remove(player.getUniqueId());
@@ -76,7 +81,7 @@ public class Timer {
 
             List<String> actions = CFG().getStringList("actions.cancel");
             for (String action : actions) {
-                execute(player, action);
+                plugin.getActions().execute(player, action);
             }
 
         }

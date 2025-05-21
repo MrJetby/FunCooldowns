@@ -1,5 +1,6 @@
 package me.jetby.cmdTimer.manager;
 
+import me.jetby.cmdTimer.Main;
 import net.md_5.bungee.api.ChatMessageType;
 import net.md_5.bungee.api.chat.ClickEvent;
 import net.md_5.bungee.api.chat.TextComponent;
@@ -15,8 +16,7 @@ import static me.jetby.cmdTimer.utils.Parser.hex;
 
 public class Actions {
 
-
-    public static void execute(Player player, String command) {
+    public void execute(Player player, String command) {
         String[] args = command.split(" ");
         String withoutCMD = command.replace(args[0] + " ", "");
         String cancelTeleport =  CFG().getString("cancel-command");
